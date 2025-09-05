@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  dealer-logic:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile
+    container_name: dealer-logic-dev
+    ports:
+      - "3001:3001"  # Monitor Dashboard
+      - "3002:3002"  # Webhook Listener
+    environment:
+      - NODE_ENV=development
+      - MONITOR_PORT=3001
+      - WEBHOOK_PORT=3002
+    volumes:
+      - .:/workspace:cached
+      - node_modules:/workspace/node_modules
+    command: npm run monitor
+    networks:
+      - dealer-logic-network
+
+  mock-api:
+    image: mockoon/cli:latest
+    container_name: dealer-logic-mock-api
+    ports:
+      - "3003:3003"
+    volumes:
+      - ./mocks:/data
+    command: --data /data/dealer-api.json --port 3003
+    networks:
+      - dealer-logic-network
+
+  redis:
+    image: redis:alpine
+    container_name: dealer-logic-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - dealer-logic-network
+
+networks:
+  dealer-logic-network:
+    driver: bridge
+
+volumes:
+  node_modules:

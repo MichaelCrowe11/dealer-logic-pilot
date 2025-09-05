@@ -1,0 +1,57 @@
+{
+  "name": "Dealer Logic Development Environment",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-20-bullseye",
+  
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/common-utils:2": {}
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "christian-kohler.npm-intellisense",
+        "eg2.vscode-npm-script",
+        "redhat.vscode-yaml",
+        "dotenv.dotenv-vscode",
+        "humao.rest-client",
+        "rangav.vscode-thunder-client"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "files.autoSave": "afterDelay"
+      }
+    }
+  },
+
+  "forwardPorts": [3001, 3002],
+  "portsAttributes": {
+    "3001": {
+      "label": "Monitor Dashboard",
+      "onAutoForward": "openBrowser"
+    },
+    "3002": {
+      "label": "Webhook Listener",
+      "onAutoForward": "notify"
+    }
+  },
+
+  "postCreateCommand": "npm install && cp .env.template .env.codespaces && echo '✅ Environment ready! Edit .env.codespaces with your configuration.'",
+  "postStartCommand": "echo '🚀 Dealer Logic Codespace Ready! Run: npm run validate'",
+
+  "remoteUser": "node",
+
+  "mounts": [],
+  
+  "runArgs": ["--name", "dealer-logic-dev"],
+
+  "hostRequirements": {
+    "cpus": 2,
+    "memory": "4gb",
+    "storage": "32gb"
+  }
+}

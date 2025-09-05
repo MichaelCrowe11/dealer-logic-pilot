@@ -1,0 +1,116 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Create test environment
+      run: |
+        cp .env.template .env
+        # Fill with test values
+        sed -i 's/DEALER_NAME=/DEALER_NAME=Test Dealer/g' .env
+        sed -i 's/DEALER_ADDRESS=/DEALER_ADDRESS=123 Test St/g' .env
+        sed -i 's/DEALER_PHONE=/DEALER_PHONE=5551234567/g' .env
+        sed -i 's/MAIN_NUMBER=/MAIN_NUMBER=5551234567/g' .env
+        sed -i 's/SALES_NUMBER=/SALES_NUMBER=5551234568/g' .env
+        sed -i 's/SERVICE_NUMBER=/SERVICE_NUMBER=5551234569/g' .env
+        sed -i 's/PARTS_NUMBER=/PARTS_NUMBER=5551234570/g' .env
+        sed -i 's/SIP_PROVIDER=/SIP_PROVIDER=TestProvider/g' .env
+        sed -i 's/SIP_INGRESS_HOST=/SIP_INGRESS_HOST=test.ingress.com/g' .env
+        sed -i 's/SIP_EGRESS_HOST=/SIP_EGRESS_HOST=test.egress.com/g' .env
+        sed -i 's/VOICE_ID_EN=/VOICE_ID_EN=test-voice-en/g' .env
+        sed -i 's/CRM_TYPE=/CRM_TYPE=TestCRM/g' .env
+        sed -i 's/ADF_INBOX_EMAIL=/ADF_INBOX_EMAIL=test@dealer.com/g' .env
+    
+    - name: Run validation
+      run: npm run validate
+    
+    - name: Upload validation report
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: validation-report
+        path: reports/
+
+  test:
+    needs: validate
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run syntax check
+      run: |
+        for file in scripts/*.js; do
+          node -c "$file"
+        done
+    
+    - name: Check JSON validity
+      run: |
+        for file in config/*.json; do
+          jq empty "$file"
+        done
+
+  docker-build:
+    needs: validate
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    
+    - name: Build Docker image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        file: ./.devcontainer/Dockerfile
+        push: false
+        tags: dealer-logic:test
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+  security-scan:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Run npm audit
+      run: npm audit --audit-level=high || true
+    
+    - name: Check for secrets
+      uses: trufflesecurity/trufflehog@main
+      with:
+        path: ./
+        base: HEAD~1
+        head: HEAD

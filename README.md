@@ -1,8 +1,17 @@
 # Dealer Logic - Arizona Pilot
 
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/MichaelCrowe11/dealer-logic-pilot)
+[![CI/CD Pipeline](https://github.com/MichaelCrowe11/dealer-logic-pilot/actions/workflows/ci.yml/badge.svg)](https://github.com/MichaelCrowe11/dealer-logic-pilot/actions)
+
 AI-powered voice agent system for automotive dealerships. This pilot deployment provides intelligent call handling for sales, service, parts, and after-hours support.
 
-## Quick Start
+## 🚀 Quick Start with GitHub Codespaces
+
+Click the button above to instantly launch a fully configured development environment in your browser. No local setup required!
+
+## 💻 Local Development
+
+### Quick Start
 
 1. **Clone and Install**
 ```bash
@@ -211,6 +220,38 @@ If issues occur, revert DID routing at SIP provider level:
 - Recording compliance per state law
 - Zero retention mode available
 - Encrypted webhook communications
+
+## 🐳 Docker Development
+
+```bash
+# Build and run with Docker Compose
+docker-compose up -d
+
+# View logs
+docker-compose logs -f dealer-logic
+
+# Stop services
+docker-compose down
+```
+
+## ☁️ GitHub Codespaces
+
+This repository is optimized for GitHub Codespaces:
+
+1. Click "Code" → "Codespaces" → "Create codespace"
+2. Wait for environment setup (2-3 minutes)
+3. Terminal will show when ready
+4. Run `npm run validate` to check setup
+5. Access dashboard at forwarded port 3001
+
+### Codespace Features
+
+- Pre-configured Node.js environment
+- Mock API server for testing
+- Automatic port forwarding
+- VS Code extensions included
+- Git hooks pre-configured
+- Test data and scenarios ready
 
 ## License
 
