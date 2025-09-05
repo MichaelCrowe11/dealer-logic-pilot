@@ -1,0 +1,32 @@
+{
+  "name": "dealer-logic-pilot",
+  "version": "1.0.0",
+  "description": "Dealer Logic Arizona Pilot - AI Voice Agent System",
+  "main": "scripts/deploy.js",
+  "scripts": {
+    "deploy": "node scripts/deploy.js",
+    "validate": "node scripts/validate.js",
+    "test": "node scripts/test-calls.js",
+    "monitor": "node scripts/monitor.js",
+    "setup": "npm install && cp .env.template .env",
+    "check": "npm run validate",
+    "start": "npm run deploy && npm run monitor"
+  },
+  "keywords": [
+    "dealer",
+    "automotive",
+    "voice",
+    "AI",
+    "telephony",
+    "CRM"
+  ],
+  "author": "Dealer Logic",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

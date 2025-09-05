@@ -1,0 +1,25 @@
+{
+  "sms_templates": [
+    {
+      "id": "sales_appt_confirm",
+      "content": "{{DEALER_NAME}}: Your test drive for {{VEHICLE}} is set for {{DATETIME}}. Reply YES to confirm, STOP to opt out."
+    },
+    {
+      "id": "service_appt_confirm",
+      "content": "{{DEALER_NAME}}: Service appt {{DATETIME}} for {{YEAR}} {{MAKE}} {{MODEL}}. Reply YES to confirm, STOP to opt out."
+    },
+    {
+      "id": "pay_link",
+      "content": "{{DEALER_NAME}}: Secure payment link for RO {{RO}}: {{URL}}"
+    }
+  ],
+  "email_templates": [
+    {
+      "id": "adf_sales_lead",
+      "subject": "ADF Lead - {{CUSTOMER_NAME}} - {{VEHICLE}}",
+      "to": ["{{ADF_INBOX_EMAIL}}"],
+      "content_type": "text/xml",
+      "body": "<?xml version=\"1.0\"?><adf><prospect><requestdate>{{ISO_NOW}}</requestdate><vehicle><year>{{YEAR}}</year><make>{{MAKE}}</make><model>{{MODEL}}</model><vin>{{VIN}}</vin><stock>{{STOCK}}</stock><interest type=\"purchase\">new</interest></vehicle><customer><contact><name part=\"full\">{{CUSTOMER_NAME}}</name><email>{{EMAIL}}</email><phone>{{PHONE}}</phone></contact><comments>{{NOTES}}</comments></customer><vendor><contact><name part=\"full\">{{DEALER_NAME}}</name><phone>{{DEALER_PHONE}}</phone></contact></vendor><provider><name part=\"full\">Dealer Logic (ElevenLabs)</name></provider></prospect></adf>"
+    }
+  ]
+}

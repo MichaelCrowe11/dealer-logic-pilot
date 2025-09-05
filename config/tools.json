@@ -1,0 +1,312 @@
+{
+  "tools": [
+    {
+      "name": "createLead",
+      "endpoint": {
+        "method": "POST",
+        "url": "{{TOOL_CREATE_LEAD_URL}}"
+      },
+      "schema": {
+        "type": "object",
+        "properties": {
+          "department": {
+            "type": "string",
+            "enum": ["sales", "service", "parts"]
+          },
+          "firstName": {"type": "string"},
+          "lastName": {"type": "string"},
+          "phone": {"type": "string"},
+          "email": {"type": "string"},
+          "vehicleInterest": {"type": "string"},
+          "tradeVIN": {"type": "string"},
+          "notes": {"type": "string"},
+          "consents": {
+            "type": "object",
+            "properties": {
+              "recordingDisclosed": {"type": "boolean"},
+              "smsOptIn": {"type": "boolean"},
+              "dncRequest": {"type": "boolean"}
+            }
+          }
+        },
+        "required": ["department", "firstName", "phone", "consents"]
+      }
+    },
+    {
+      "name": "scheduleService",
+      "endpoint": {
+        "method": "POST",
+        "url": "{{TOOL_SCHEDULE_SERVICE_URL}}"
+      },
+      "schema": {
+        "type": "object",
+        "properties": {
+          "vin": {"type": "string"},
+          "licensePlate": {"type": "string"},
+          "odometer": {"type": "integer"},
+          "concern": {"type": "string"},
+          "transport": {
+            "type": "string",
+            "enum": ["wait", "drop", "loaner", "rideshare"]
+          },
+          "preferred": {
+            "type": "string",
+            "description": "ISO datetime"
+          }
+        },
+        "required": ["concern"]
+      }
+    },
+    {
+      "name": "checkRecall",
+      "endpoint": {
+        "method": "GET",
+        "url": "{{TOOL_CHECK_RECALL_URL}}?vin={vin}"
+      },
+      "schema": {
+        "type": "object",
+        "properties": {
+          "vin": {"type": "string"}
+        },
+        "required": ["vin"]
+      }
+    },
+    {
+      "name": "getInventory",
+      "endpoint": {
+        "method": "GET",
+        "url": "{{TOOL_GET_INVENTORY_URL}}?q={query}"
+      },
+      "schema": {
+        "type": "object",
+        "properties": {
+          "query": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "bookAppt",
+      "endpoint": {
+        "method": "POST",
+        "url": "{{TOOL_BOOK_APPT_URL}}"
+      },
+      "schema": {
+        "type": "object",
+        "properties": {
+          "salespersonId": {"type": "string"},
+          "time": {"type": "string"},
+          "vehicleId": {"type": "string"}
+        },
+        "required": ["time"]
+      }
+    },
+    {
+      "name": "sendSMS",
+      "endpoint": {
+        "method": "POST",
+        "url": "{{TOOL_SEND_SMS_URL}}"
+      },
+      "schema": {
+        "type": "object",
+        "properties": {
+          "phone": {"type": "string"},
+          "templateId": {"type": "string"},
+          "vars": {"type": "object"}
+        },
+        "required": ["phone", "templateId"]
+      }
+    },
+    {
+      "name": "getROStatus",
+      "endpoint": {
+        "method": "GET",
+        "url": "{{TOOL_GET_RO_STATUS_URL}}?ro={roId}&phone={phone}"
+      },
+      "schema": {
+        "type": "object",
+        "properties": {
+          "roId": {"type": "string"},
+          "phone": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "sendPaymentLink",
+      "endpoint": {
+        "method": "POST",
+        "url": "{{TOOL_SEND_PAYMENT_LINK_URL}}"
+      },
+      "schema": {
+        "type": "object",
+        "properties": {
+          "roId": {"type": "string"},
+          "amount": {"type": "number"},
+          "phone": {"type": "string"}
+        },
+        "required": ["roId", "phone"]
+      }
+    },
+    {
+      "name": "partsLookup",
+      "endpoint": {
+        "method": "GET",
+        "url": "{{TOOL_PARTS_LOOKUP_URL}}?vin={vin}&ymm={ymm}&q={query}"
+      },
+      "schema": {
+        "type": "object",
+        "properties": {
+          "vin": {"type": "string"},
+          "ymm": {"type": "string"},
+          "query": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "createPartsQuote",
+      "endpoint": {
+        "method": "POST",
+        "url": "{{TOOL_CREATE_PARTS_QUOTE_URL}}"
+      },
+      "schema": {
+        "type": "object",
+        "properties": {
+          "vin": {"type": "string"},
+          "parts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "sku": {"type": "string"},
+                "qty": {"type": "integer"}
+              }
+            }
+          },
+          "pickup": {
+            "type": "string",
+            "enum": ["counter", "delivery"]
+          }
+        }
+      }
+    },
+    {
+      "name": "sendQuote",
+      "endpoint": {
+        "method": "POST",
+        "url": "{{TOOL_SEND_QUOTE_URL}}"
+      },
+      "schema": {
+        "type": "object",
+        "properties": {
+          "phone": {"type": "string"},
+          "email": {"type": "string"},
+          "quoteId": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "sendFinanceLink",
+      "endpoint": {
+        "method": "POST",
+        "url": "{{TOOL_SEND_FINANCE_LINK_URL}}"
+      },
+      "schema": {
+        "type": "object",
+        "properties": {
+          "vehicleId": {"type": "string"},
+          "phone": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "decodeVIN",
+      "endpoint": {
+        "method": "GET",
+        "url": "{{TOOL_DECODE_VIN_URL}}?vin={vin}"
+      },
+      "schema": {
+        "type": "object",
+        "properties": {
+          "vin": {"type": "string"}
+        },
+        "required": ["vin"]
+      }
+    },
+    {
+      "name": "createTradeLead",
+      "endpoint": {
+        "method": "POST",
+        "url": "{{TOOL_CREATE_TRADE_LEAD_URL}}"
+      },
+      "schema": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "phone": {"type": "string"},
+          "vin": {"type": "string"},
+          "condition": {"type": "string"},
+          "payoff": {"type": "number"}
+        }
+      }
+    },
+    {
+      "name": "bookAppraisal",
+      "endpoint": {
+        "method": "POST",
+        "url": "{{TOOL_BOOK_APPRAISAL_URL}}"
+      },
+      "schema": {
+        "type": "object",
+        "properties": {
+          "time": {"type": "string"},
+          "location": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "transfer",
+      "endpoint": {
+        "method": "POST",
+        "url": "{{TOOL_TRANSFER_URL}}"
+      },
+      "schema": {
+        "type": "object",
+        "properties": {
+          "to": {"type": "string"}
+        },
+        "required": ["to"]
+      }
+    },
+    {
+      "name": "createVoicemailTranscription",
+      "endpoint": {
+        "method": "POST",
+        "url": "{{TOOL_CREATE_VOICEMAIL_URL}}"
+      },
+      "schema": {
+        "type": "object",
+        "properties": {
+          "caller": {"type": "string"},
+          "message": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "emailDigest",
+      "endpoint": {
+        "method": "POST",
+        "url": "{{TOOL_EMAIL_DIGEST_URL}}"
+      },
+      "schema": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "subject": {"type": "string"},
+          "html": {"type": "string"}
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,119 @@
+{
+  "workspace": {
+    "name": "Dealer Logic - Arizona Pilot",
+    "default_language": "en-US",
+    "alt_languages": ["es-US"],
+    "notes": "Set data retention per dealer policy; enable Zero Retention if required."
+  },
+  "telephony": {
+    "sip_trunks": [
+      {
+        "name": "Main Trunk",
+        "provider": "{{SIP_PROVIDER}}",
+        "ingress": {
+          "host": "{{SIP_INGRESS_HOST}}",
+          "numbers": [
+            "{{MAIN_NUMBER}}",
+            "{{SALES_NUMBER}}",
+            "{{SERVICE_NUMBER}}",
+            "{{PARTS_NUMBER}}"
+          ]
+        },
+        "egress": {
+          "host": "{{SIP_EGRESS_HOST}}"
+        }
+      }
+    ],
+    "routing": {
+      "did_map": {
+        "{{MAIN_NUMBER}}": "agent.reception",
+        "{{SALES_NUMBER}}": "agent.sales",
+        "{{SERVICE_NUMBER}}": "agent.service",
+        "{{PARTS_NUMBER}}": "agent.parts"
+      },
+      "after_hours": {
+        "timezone": "America/Phoenix",
+        "hours": {
+          "mon_fri": "07:00-19:00",
+          "sat": "08:00-18:00",
+          "sun": "closed"
+        },
+        "fallback_agent": "agent.after_hours"
+      }
+    }
+  },
+  "privacy": {
+    "recording_notice": "This call may be recorded for quality and training.",
+    "data_retention_days": 30,
+    "zero_retention_mode": false
+  },
+  "knowledge_base": [
+    {
+      "type": "text",
+      "title": "Dealer Identity",
+      "content": "{{DEALER_NAME}} - {{DEALER_ADDRESS}} - {{DEALER_WEBSITE}} - {{BRANDS}}"
+    },
+    {
+      "type": "text",
+      "title": "Store Hours",
+      "content": "Sales: {{HOURS_SALES}} | Service: {{HOURS_SERVICE}} | Parts: {{HOURS_PARTS}}"
+    },
+    {
+      "type": "url",
+      "title": "Service Scheduler",
+      "value": "{{SERVICE_SCHEDULER_URL}}"
+    },
+    {
+      "type": "url",
+      "title": "Inventory Search",
+      "value": "{{INVENTORY_SEARCH_URL}}"
+    },
+    {
+      "type": "text",
+      "title": "Policies",
+      "content": "No pricing/OTD quotes by AI. No payment capture by AI. Send secure links only. Honor DNC on request. Bilingual support (EN/ES)."
+    }
+  ],
+  "webhooks": {
+    "post_call": {
+      "url": "{{WEBHOOK_POSTCALL_URL}}",
+      "secret": "{{WEBHOOK_SECRET}}",
+      "send_audio": true,
+      "fields": [
+        "conversation_id",
+        "agent_id",
+        "intent",
+        "entities",
+        "transcript",
+        "has_audio",
+        "has_user_audio",
+        "has_response_audio"
+      ]
+    }
+  },
+  "integrations": {
+    "crm": {
+      "type": "{{CRM_TYPE}}",
+      "adf_email": "{{ADF_INBOX_EMAIL}}",
+      "api": {
+        "base_url": "{{CRM_API_BASE}}",
+        "key": "{{CRM_API_KEY}}"
+      }
+    },
+    "service_scheduler": {
+      "type": "{{SCHEDULER}}",
+      "api_base": "{{SCHEDULER_API_BASE}}",
+      "key": "{{SCHEDULER_API_KEY}}"
+    },
+    "payments": {
+      "provider": "{{PAYMENTS_PROVIDER}}",
+      "cashier_extension": "{{CASHIER_TRANSFER_NUMBER}}"
+    }
+  },
+  "compliance": {
+    "call_opening": "This call may be recorded for quality and training.",
+    "sms_opt_in_script": "I can text you details. Okay to text this number? Reply STOP to opt out.",
+    "dnc_phrase": "Understood. I've added you to our do-not-call list.",
+    "payment_rule": "No card or bank info collected by AI; use sendPaymentLink or transfer to cashier."
+  }
+}

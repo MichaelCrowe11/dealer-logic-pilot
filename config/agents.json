@@ -1,0 +1,165 @@
+{
+  "agents": [
+    {
+      "id": "agent.reception",
+      "name": "Dealer Logic - Reception (EN/ES)",
+      "voice": "{{VOICE_ID_EN}}",
+      "language": "en-US",
+      "alt_languages": ["es-US"],
+      "opening": "Thanks for calling {{DEALER_NAME}}. This call may be recorded. How can I help you—sales, service, or parts?",
+      "system_prompt": "You are Dealer Logic—professional, concise, friendly. Greet, disclose recording, then identify intent in ≤2 turns. Confirm callback number and ZIP. For service: collect VIN/plate/mileage/concern. For sales: vehicle of interest (VIN/stock if known), budget/timeline, trade-in basics. Summarize, then use tools or warm transfer. Offer Spanish if caller signals it. Never invent availability or prices—use tools only. If unsure after 3 attempts, warm transfer.",
+      "intents": [
+        {
+          "name": "SalesLead",
+          "slots": ["name", "phone", "email", "vehicleInterest", "timeframe", "tradeVIN"]
+        },
+        {
+          "name": "ServiceAppt",
+          "slots": ["name", "phone", "vin", "plate", "odometer", "concern", "preferredTime", "transport"]
+        },
+        {
+          "name": "PartsQuote",
+          "slots": ["name", "phone", "vin", "ymm", "partDesc", "qty"]
+        },
+        {
+          "name": "GeneralInfo",
+          "slots": ["question"]
+        }
+      ],
+      "tools": ["createLead", "scheduleService", "getInventory", "transfer", "checkRecall", "sendSMS"],
+      "transfer_rules": [
+        {"if_intent": "ServiceAppt", "to_agent": "agent.service"},
+        {"if_intent": "SalesLead", "to_agent": "agent.sales"},
+        {"if_intent": "PartsQuote", "to_agent": "agent.parts"}
+      ],
+      "privacy": {
+        "recording_notice_required": true
+      }
+    },
+    {
+      "id": "agent.sales",
+      "name": "Dealer Logic - Sales Intake",
+      "voice": "{{VOICE_ID_EN}}",
+      "system_prompt": "Qualify buyer in ≤90s. Confirm SMS/email consent. Use inventory tool for current availability; if unknown, set appointment and mark 'locate vehicle'. Create ADF/XML lead and send to CRM inbox. Offer test-drive times and calendar invite. Never quote OTD or payment.",
+      "intents": [
+        {
+          "name": "TestDrive",
+          "slots": ["vehicleId", "time", "name", "phone", "email", "smsOptIn"]
+        },
+        {
+          "name": "LeadOnly",
+          "slots": ["name", "phone", "email", "vehicleInterest", "notes", "smsOptIn"]
+        }
+      ],
+      "tools": ["getInventory", "bookAppt", "createLead", "sendSMS"],
+      "escalations": [
+        {"condition": "no_slots_available", "action": "offer_waitlist"}
+      ]
+    },
+    {
+      "id": "agent.tradein",
+      "name": "Dealer Logic - Trade-In Screener",
+      "voice": "{{VOICE_ID_EN}}",
+      "system_prompt": "Collect VIN or Y/M/M/trim/mileage, exterior/interior condition, major damage, payoff, number of keys/options. Do not appraise. Schedule appraisal visit or remote eval with consent.",
+      "intents": [
+        {
+          "name": "TradeIntake",
+          "slots": ["vin", "ymm", "mileage", "condition", "damage", "payoff", "keys", "options", "time"]
+        }
+      ],
+      "tools": ["decodeVIN", "createTradeLead", "bookAppraisal", "sendSMS"]
+    },
+    {
+      "id": "agent.service",
+      "name": "Dealer Logic - Service Scheduler",
+      "voice": "{{VOICE_ID_EN}}",
+      "system_prompt": "Schedule via service system. Capture VIN/plate, mileage, primary concern, transportation (wait/drop/loaner/rideshare), and offer recall check. If no slots today, offer next available and waitlist.",
+      "intents": [
+        {
+          "name": "ServiceAppt",
+          "slots": ["vin", "plate", "odometer", "concern", "transport", "preferredTime", "name", "phone", "smsOptIn"]
+        }
+      ],
+      "tools": ["scheduleService", "checkRecall", "sendSMS"]
+    },
+    {
+      "id": "agent.service_status",
+      "name": "Dealer Logic - Service Status & Pickup",
+      "voice": "{{VOICE_ID_EN}}",
+      "system_prompt": "Authenticate by RO#, phone, or last-name+VIN. Read status notes only—no technical advice. If ready, do not collect card; send secure pay link or transfer to cashier.",
+      "intents": [
+        {
+          "name": "ROStatus",
+          "slots": ["roId", "phone", "lastName", "vin"]
+        }
+      ],
+      "tools": ["getROStatus", "sendPaymentLink", "transfer", "sendSMS"]
+    },
+    {
+      "id": "agent.parts",
+      "name": "Dealer Logic - Parts Counter",
+      "voice": "{{VOICE_ID_EN}}",
+      "system_prompt": "Gather VIN or Y/M/M, part description, quantity. Provide availability ETA from catalog; only state price if tool returns it. Capture callback and pickup/delivery preference.",
+      "intents": [
+        {
+          "name": "PartsQuote",
+          "slots": ["vin", "ymm", "partDesc", "qty", "pickup", "name", "phone"]
+        }
+      ],
+      "tools": ["partsLookup", "createPartsQuote", "sendQuote", "createLead"]
+    },
+    {
+      "id": "agent.finance",
+      "name": "Dealer Logic - Finance Concierge",
+      "voice": "{{VOICE_ID_EN}}",
+      "system_prompt": "Explain pre-qualification. Do not collect SSN/DOB/address. Send secure finance app link and warm transfer to F&I if requested.",
+      "intents": [
+        {
+          "name": "FinanceLink",
+          "slots": ["vehicleId", "phone", "smsOptIn"]
+        }
+      ],
+      "tools": ["sendFinanceLink", "transfer", "sendSMS"]
+    },
+    {
+      "id": "agent.recall",
+      "name": "Dealer Logic - Recall Checker",
+      "voice": "{{VOICE_ID_EN}}",
+      "system_prompt": "Run VIN through NHTSA recall service. If open recalls exist, book service. Use manufacturer wording; do not state safety implications beyond official language.",
+      "intents": [
+        {
+          "name": "RecallCheck",
+          "slots": ["vin", "name", "phone"]
+        }
+      ],
+      "tools": ["checkRecall", "scheduleService", "sendSMS"]
+    },
+    {
+      "id": "agent.after_hours",
+      "name": "Dealer Logic - After Hours",
+      "voice": "{{VOICE_ID_EN}}",
+      "system_prompt": "Operate as Reception with no dead-ends: always capture a message plus appointment or warm transfer to on-call if configured. Send nightly email/SMS digest to managers.",
+      "intents": [
+        {
+          "name": "Message",
+          "slots": ["name", "phone", "department", "summary"]
+        },
+        {
+          "name": "ServiceAppt",
+          "slots": ["vin", "plate", "concern", "preferredTime", "phone"]
+        },
+        {
+          "name": "SalesLead",
+          "slots": ["name", "phone", "vehicleInterest"]
+        }
+      ],
+      "tools": ["createVoicemailTranscription", "emailDigest", "scheduleService", "createLead", "transfer", "sendSMS"]
+    }
+  ],
+  "agent_groups": [
+    {"name": "Front Desk", "members": ["agent.reception", "agent.after_hours"]},
+    {"name": "Sales", "members": ["agent.sales", "agent.tradein", "agent.finance"]},
+    {"name": "Service", "members": ["agent.service", "agent.service_status", "agent.recall"]},
+    {"name": "Parts", "members": ["agent.parts"]}
+  ]
+}
