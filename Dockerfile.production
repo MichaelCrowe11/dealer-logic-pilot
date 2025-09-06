@@ -1,0 +1,32 @@
+# Production Dockerfile for Dealer Logic
+FROM node:18-alpine
+
+# Install dependencies for health checks
+RUN apk add --no-cache curl
+
+# Create app directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install production dependencies
+RUN npm ci --only=production
+
+# Copy application files
+COPY config/ ./config/
+COPY scripts/ ./scripts/
+COPY .env.production ./.env
+
+# Create reports directory
+RUN mkdir -p /app/reports
+
+# Expose ports
+EXPOSE 8080 3001 3002 3003
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:8080/health || exit 1
+
+# Start the application
+CMD ["node", "scripts/server.js"]

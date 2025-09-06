@@ -1,0 +1,81 @@
+{
+  "apps": {
+    "http": {
+      "servers": {
+        "srv0": {
+          "listen": [":443"],
+          "routes": [
+            {
+              "match": [{"host": ["dealerlogic.io", "www.dealerlogic.io"]}],
+              "handle": [{
+                "handler": "reverse_proxy",
+                "upstreams": [{"dial": "localhost:8080"}]
+              }]
+            },
+            {
+              "match": [{"host": ["api.dealerlogic.io"]}],
+              "handle": [{
+                "handler": "reverse_proxy",
+                "upstreams": [{"dial": "localhost:3001"}],
+                "headers": {
+                  "request": {
+                    "set": {
+                      "X-Real-IP": ["{http.request.remote.host}"],
+                      "X-Forwarded-For": ["{http.request.remote.host}"],
+                      "X-Forwarded-Proto": ["https"]
+                    }
+                  }
+                }
+              }]
+            },
+            {
+              "match": [{"host": ["hooks.dealerlogic.io"]}],
+              "handle": [{
+                "handler": "reverse_proxy",
+                "upstreams": [{"dial": "localhost:3002"}],
+                "headers": {
+                  "request": {
+                    "set": {
+                      "X-Real-IP": ["{http.request.remote.host}"],
+                      "X-Forwarded-For": ["{http.request.remote.host}"],
+                      "X-Forwarded-Proto": ["https"]
+                    }
+                  }
+                }
+              }]
+            },
+            {
+              "match": [{"host": ["dashboard.dealerlogic.io"]}],
+              "handle": [{
+                "handler": "reverse_proxy",
+                "upstreams": [{"dial": "localhost:3003"}]
+              }]
+            }
+          ],
+          "automatic_https": {
+            "skip": [],
+            "disable_redirects": false,
+            "ignore_loaded_certs": false
+          }
+        }
+      }
+    },
+    "tls": {
+      "automation": {
+        "policies": [{
+          "subjects": [
+            "dealerlogic.io",
+            "www.dealerlogic.io",
+            "api.dealerlogic.io",
+            "hooks.dealerlogic.io",
+            "dashboard.dealerlogic.io"
+          ],
+          "issuers": [{
+            "module": "acme",
+            "email": "alerts@dealerlogic.io"
+          }]
+        }]
+      }
+    }
+  }
+}

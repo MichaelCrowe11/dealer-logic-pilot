@@ -1,0 +1,119 @@
+version: '3.8'
+
+services:
+  dealer-logic-api:
+    image: node:18-alpine
+    container_name: dealer-logic-api
+    restart: always
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+    env_file:
+      - .env.production
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    working_dir: /app
+    command: node scripts/api-server.js
+    ports:
+      - "3001:3001"
+    networks:
+      - dealer-logic-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  dealer-logic-webhooks:
+    image: node:18-alpine
+    container_name: dealer-logic-webhooks
+    restart: always
+    environment:
+      NODE_ENV: production
+      PORT: 3002
+    env_file:
+      - .env.production
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    working_dir: /app
+    command: node scripts/webhook-server.js
+    ports:
+      - "3002:3002"
+    networks:
+      - dealer-logic-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  dealer-logic-monitor:
+    image: node:18-alpine
+    container_name: dealer-logic-monitor
+    restart: always
+    environment:
+      NODE_ENV: production
+      PORT: 3003
+    env_file:
+      - .env.production
+    volumes:
+      - ./:/app
+      - /app/node_modules
+      - ./reports:/app/reports
+    working_dir: /app
+    command: node scripts/monitor.js --production
+    ports:
+      - "3003:3003"
+    networks:
+      - dealer-logic-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  nginx:
+    image: nginx:alpine
+    container_name: dealer-logic-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.production.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - ./static:/usr/share/nginx/html:ro
+    networks:
+      - dealer-logic-network
+    depends_on:
+      - dealer-logic-api
+      - dealer-logic-webhooks
+      - dealer-logic-monitor
+
+  redis:
+    image: redis:7-alpine
+    container_name: dealer-logic-redis
+    restart: always
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    networks:
+      - dealer-logic-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  dealer-logic-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+    driver: local
