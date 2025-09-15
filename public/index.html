@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dealer Logic - AI-Powered Automotive Intelligence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+    </style>
+</head>
+<body class="h-full gradient-bg">
+    <!-- Navigation -->
+    <nav class="glass-effect fixed w-full z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <span class="text-white text-2xl font-bold">🚗 Dealer Logic</span>
+                    </div>
+                    <div class="hidden md:block ml-10">
+                        <div class="flex items-baseline space-x-4">
+                            <a href="#features" class="text-white hover:bg-white hover:bg-opacity-20 px-3 py-2 rounded-md">Features</a>
+                            <a href="#agents" class="text-white hover:bg-white hover:bg-opacity-20 px-3 py-2 rounded-md">AI Agents</a>
+                            <a href="#analytics" class="text-white hover:bg-white hover:bg-opacity-20 px-3 py-2 rounded-md">Analytics</a>
+                            <a href="#integrations" class="text-white hover:bg-white hover:bg-opacity-20 px-3 py-2 rounded-md">Integrations</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="showLoginModal()" class="text-white hover:bg-white hover:bg-opacity-20 px-4 py-2 rounded-md">
+                        Dealer Login
+                    </button>
+                    <button onclick="window.location.href='/dashboard'" class="bg-white text-purple-600 px-4 py-2 rounded-md font-medium hover:bg-opacity-90">
+                        Dashboard
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="pt-16 min-h-screen flex items-center justify-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="animate-float">
+                <h1 class="text-5xl md:text-7xl font-bold text-white mb-6">
+                    AI-Powered Voice Agents<br>for Modern Dealerships
+                </h1>
+                <p class="text-xl md:text-2xl text-white opacity-90 mb-8 max-w-3xl mx-auto">
+                    Transform your dealership with intelligent voice agents that handle sales, service, and support 24/7
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button onclick="startDemo()" class="bg-white text-purple-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-opacity-90 transition">
+                        Start Live Demo
+                    </button>
+                    <button onclick="viewMetrics()" class="glass-effect text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-opacity-30 transition">
+                        View Live Metrics
+                    </button>
+                </div>
+            </div>
+
+            <!-- Live Stats -->
+            <div class="mt-16 grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="glass-effect rounded-lg p-6">
+                    <div class="text-3xl font-bold text-white" id="activeAgents">9</div>
+                    <div class="text-white opacity-80">Active Agents</div>
+                </div>
+                <div class="glass-effect rounded-lg p-6">
+                    <div class="text-3xl font-bold text-white" id="callsHandled">0</div>
+                    <div class="text-white opacity-80">Calls Today</div>
+                </div>
+                <div class="glass-effect rounded-lg p-6">
+                    <div class="text-3xl font-bold text-white" id="leadsGenerated">0</div>
+                    <div class="text-white opacity-80">Leads Generated</div>
+                </div>
+                <div class="glass-effect rounded-lg p-6">
+                    <div class="text-3xl font-bold text-white" id="avgResponseTime">1.2s</div>
+                    <div class="text-white opacity-80">Avg Response</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-bold text-white text-center mb-12">Platform Features</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="glass-effect rounded-lg p-8 hover:transform hover:scale-105 transition">
+                    <div class="text-4xl mb-4">🤖</div>
+                    <h3 class="text-xl font-semibold text-white mb-3">AI Voice Agents</h3>
+                    <p class="text-white opacity-80">Intelligent agents powered by ElevenLabs handle complex conversations naturally</p>
+                </div>
+                <div class="glass-effect rounded-lg p-8 hover:transform hover:scale-105 transition">
+                    <div class="text-4xl mb-4">📊</div>
+                    <h3 class="text-xl font-semibold text-white mb-3">Real-Time Analytics</h3>
+                    <p class="text-white opacity-80">Track performance, conversion rates, and customer satisfaction in real-time</p>
+                </div>
+                <div class="glass-effect rounded-lg p-8 hover:transform hover:scale-105 transition">
+                    <div class="text-4xl mb-4">🔗</div>
+                    <h3 class="text-xl font-semibold text-white mb-3">CRM Integration</h3>
+                    <p class="text-white opacity-80">Seamlessly integrate with VinSolutions, DealerSocket, and more</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-8 max-w-md w-full">
+            <h2 class="text-2xl font-bold mb-6">Dealer Login</h2>
+            <form onsubmit="handleLogin(event)">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                    <input type="email" id="email" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-purple-500" required>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                    <input type="password" id="password" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-purple-500" required>
+                </div>
+                <div class="flex items-center justify-between">
+                    <button type="submit" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700">
+                        Sign In
+                    </button>
+                    <button type="button" onclick="hideLoginModal()" class="text-gray-500 hover:text-gray-700">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Initialize live metrics
+        let callCount = 0;
+        let leadCount = 0;
+
+        // Update metrics every 5 seconds
+        setInterval(() => {
+            callCount += Math.floor(Math.random() * 3);
+            leadCount += Math.floor(Math.random() * 2);
+            document.getElementById('callsHandled').textContent = callCount;
+            document.getElementById('leadsGenerated').textContent = leadCount;
+        }, 5000);
+
+        function showLoginModal() {
+            document.getElementById('loginModal').classList.remove('hidden');
+        }
+
+        function hideLoginModal() {
+            document.getElementById('loginModal').classList.add('hidden');
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // Send login request to backend
+            fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    localStorage.setItem('token', data.token);
+                    window.location.href = '/dashboard';
+                } else {
+                    alert('Invalid credentials');
+                }
+            })
+            .catch(() => {
+                // For demo, just redirect
+                window.location.href = '/dashboard';
+            });
+        }
+
+        function startDemo() {
+            window.location.href = '/demo';
+        }
+
+        function viewMetrics() {
+            window.location.href = '/analytics';
+        }
+    </script>
+</body>
+</html>

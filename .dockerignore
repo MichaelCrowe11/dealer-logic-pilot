@@ -60,5 +60,3 @@ temp/
 credentials/
 # Local Netlify folder
 .netlify
-
-.vercel

@@ -7,10 +7,12 @@
     "deploy": "node scripts/deploy.js",
     "validate": "node scripts/validate.js",
     "test": "node scripts/test-calls.js",
+    "test:voice": "node scripts/test-voice-agent.js",
     "monitor": "node scripts/monitor.js",
     "setup": "npm install && cp .env.template .env",
     "check": "npm run validate",
-    "start": "npm run deploy && npm run monitor"
+    "start": "npm run deploy && npm run monitor",
+    "webhooks": "node api/server.js"
   },
   "keywords": [
     "dealer",
@@ -23,9 +25,31 @@
   "author": "Dealer Logic",
   "license": "UNLICENSED",
   "dependencies": {
-    "dotenv": "^16.3.1"
+    "@headlessui/react": "^2.2.7",
+    "@heroicons/react": "^2.2.0",
+    "@octokit/rest": "^22.0.0",
+    "axios": "^1.11.0",
+    "bcryptjs": "^3.0.2",
+    "bull": "^4.16.5",
+    "dotenv": "^16.3.1",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
+    "ioredis": "^5.7.0",
+    "jsonwebtoken": "^9.0.2",
+    "next": "^15.5.2",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "redis": "^5.8.2",
+    "snoowrap": "^1.23.0",
+    "socket.io": "^4.8.1",
+    "sqlite3": "^5.1.7",
+    "tailwindcss": "^4.1.13"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@flydotio/dockerfile": "^0.7.10"
+  },
   "engines": {
     "node": ">=14.0.0"
   }

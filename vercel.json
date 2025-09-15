@@ -1,43 +1,25 @@
 {
   "version": 2,
-  "name": "dealer-logic",
-  "builds": [
+  "rewrites": [
     {
-      "src": "scripts/server.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/scripts/api-server.js"
+      "source": "/api/(.*)",
+      "destination": "/api/api.js"
     },
     {
-      "src": "/hooks/(.*)",
-      "dest": "/scripts/webhook-server.js"
+      "source": "/hooks/(.*)",
+      "destination": "/api/hooks.js"
     },
     {
-      "src": "/health",
-      "dest": "/scripts/server.js"
+      "source": "/health",
+      "destination": "/api/index.js"
     },
     {
-      "src": "/(.*)",
-      "dest": "/scripts/server.js"
+      "source": "/(.*)",
+      "destination": "/api/index.js"
     }
   ],
   "env": {
     "NODE_ENV": "production"
   },
-  "regions": ["phx1"],
-  "functions": {
-    "scripts/server.js": {
-      "maxDuration": 30
-    },
-    "scripts/api-server.js": {
-      "maxDuration": 30
-    },
-    "scripts/webhook-server.js": {
-      "maxDuration": 30
-    }
-  }
+  "regions": ["iad1"]
 }
