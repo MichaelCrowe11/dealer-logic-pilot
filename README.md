@@ -1,265 +1,104 @@
-# Dealer Logic - Arizona Pilot
+# dealer-logic-pilot
 
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/MichaelCrowe11/dealer-logic-pilot)
-[![CI/CD Pipeline](https://github.com/MichaelCrowe11/dealer-logic-pilot/actions/workflows/ci.yml/badge.svg)](https://github.com/MichaelCrowe11/dealer-logic-pilot/actions)
+Config files, a validator, and small Node.js servers for an ElevenLabs voice agent pilot that answers a car dealership's phone lines (sales, service, parts, after hours).
 
-AI-powered voice agent system for automotive dealerships. This pilot deployment provides intelligent call handling for sales, service, parts, and after-hours support.
+## Status
 
-## 🚀 Quick Start with GitHub Codespaces
+`experimental`
 
-Click the button above to instantly launch a fully configured development environment in your browser. No local setup required!
+All five commits fall between 2025-09-04 and 2025-09-15. Nothing has been committed since. On 2026-09-10 the dependencies installed and three of the scripts ran, so the code is usable as reference. Nothing is deployed.
 
-## 💻 Local Development
+What does not work:
 
-### Quick Start
+- `dealerlogic.io` and `www.dealerlogic.io` do not resolve in DNS (checked 2026-09-10). Every URL in `.env.production`, `caddy.json`, `dns-config.md`, and the deploy scripts points there.
+- The Fly.io app in `fly.toml` (`dealer-logic`) no longer answers. `curl https://dealer-logic.fly.dev/` got a connection reset.
+- `api/index.js`, the Vercel entry in `vercel.json`, spawns `api/api-server.js`, `api/webhook-server.js`, and `api/monitor.js`. None of those files exist; the real files are in `scripts/`.
+- `netlify.toml` runs `npm run build` and expects `netlify/functions`. There is no `build` script and no `netlify/` directory.
+- `.github/workflows/deploy.yml` health-checks `https://dealerlogic.io/health`, which cannot resolve. `fly-deploy.yml` only watches a `main` branch; the default branch is `master`.
+- `npm test` (`scripts/test-calls.js`) is an interactive checklist that asks you to dial the configured phone numbers. It does not test code. Not run.
+- The ElevenLabs code (`api/elevenlabs-agent.js`, `scripts/convai-integration.js`) was not run. No agent was created or called.
 
-1. **Clone and Install**
-```bash
-git clone <repository-url>
+## Install and first run
+
+Run on 2026-09-10 with Node v26.5.0 and npm 11.17.0. No `.env` file, no API keys.
+
+```
+git clone https://github.com/MichaelCrowe11/dealer-logic-pilot
 cd dealer-logic-pilot
-npm install
-```
-
-2. **Configure Environment**
-```bash
-cp .env.template .env
-# Edit .env with your dealer-specific values
-```
-
-3. **Validate Configuration**
-```bash
+npm ci
 npm run validate
 ```
 
-4. **Deploy**
-```bash
-npm run deploy
-```
-
-5. **Test**
-```bash
-npm run test
-```
-
-6. **Monitor**
-```bash
-npm run monitor
-# Dashboard available at http://localhost:3001
-```
-
-## Project Structure
+Output, trimmed. Exit code 1 because no `.env` exists:
 
 ```
-dealer-logic-pilot/
-├── config/
-│   ├── dealer-logic-config.json  # Main configuration
-│   ├── agents.json               # Agent definitions
-│   ├── tools.json                # Tool endpoints
-│   └── templates.json            # SMS/Email templates
-├── scripts/
-│   ├── deploy.js                 # Deployment script
-│   ├── validate.js               # Configuration validator
-│   ├── test-calls.js             # Test call suite
-│   └── monitor.js                # Real-time monitoring
-├── reports/                      # Generated reports
-├── .env.template                 # Environment template
-└── package.json
+1. Validating Environment Variables
+    DEALER_NAME: MISSING
+    MAIN_NUMBER: MISSING
+    SIP_PROVIDER: MISSING
+    VOICE_ID_EN: MISSING
+3. Validating Agent Configuration
+    agent.reception: Configured
+    agent.sales: Configured
+    agent.service: Configured
+    agent.parts: Configured
+    agent.after_hours: Configured
+  Total agents configured: 9
+4. Validating Tool Endpoints
+    createLead: Endpoint not configured (missing TOOL_CREATE_LEAD_URL)
+7. Validating Integrations
+    CRM integration incomplete
 ```
 
-## Configuration
+The dashboard server from the Dockerfile:
 
-### Required Environment Variables
-
-- **Dealer Information**: Name, address, phone, website
-- **Phone Numbers**: Main, sales, service, parts DIDs
-- **SIP Configuration**: Provider, ingress/egress hosts
-- **Voice IDs**: ElevenLabs voice IDs for EN/ES
-- **CRM Integration**: Type, ADF email, API credentials
-
-See `.env.template` for complete list.
-
-## Agents
-
-### Reception (`agent.reception`)
-- First point of contact
-- Intent identification
-- Bilingual support (EN/ES)
-- Warm transfers
-
-### Sales (`agent.sales`)
-- Lead qualification
-- Inventory search
-- Test drive scheduling
-- ADF/XML lead creation
-
-### Service (`agent.service`)
-- Appointment scheduling
-- Recall checking
-- Transportation preferences
-- SMS confirmations
-
-### Parts (`agent.parts`)
-- Part lookup by VIN/YMM
-- Availability checking
-- Quote creation
-- Pickup/delivery options
-
-### After Hours (`agent.after_hours`)
-- Message capture
-- Voicemail transcription
-- Manager notifications
-- Emergency routing
-
-## Features
-
-### Compliance
-- Automatic recording disclosure
-- SMS opt-in collection
-- DNC list management
-- Zero retention mode support
-
-### Integrations
-- CRM (VinSolutions, DealerSocket, etc.)
-- Service Schedulers (Xtime, myKaarma)
-- Payment processors
-- SMS gateways
-
-### Monitoring
-- Real-time call metrics
-- Agent performance tracking
-- Intent distribution
-- Error logging
-- Web dashboard
-
-## Testing
-
-Run the interactive test suite:
-
-```bash
-npm run test
+```
+PORT=18090 node scripts/app.js
 ```
 
-Test scenarios include:
-- Sales lead capture
-- Service scheduling
-- Parts inquiries
-- Spanish language support
-- Status checks
-- After-hours handling
-- Warm transfers
-- DNC requests
-
-## Deployment Checklist
-
-### Pre-Deployment
-- [ ] Environment variables configured
-- [ ] Phone numbers provisioned
-- [ ] SIP trunk configured
-- [ ] CRM credentials obtained
-- [ ] Voice IDs created
-
-### Day-0
-- [ ] Run validation: `npm run validate`
-- [ ] Deploy configuration: `npm run deploy`
-- [ ] Execute test calls: `npm run test`
-- [ ] Verify CRM integration
-- [ ] Test warm transfers
-
-### Go-Live
-- [ ] Start monitoring: `npm run monitor`
-- [ ] Train BDC staff
-- [ ] Configure after-hours routing
-- [ ] Set up manager notifications
-- [ ] Document escalation procedures
-
-## KPIs
-
-### Target Metrics (30 days)
-- Answer rate: ≥98%
-- Time to answer: <2 seconds
-- Sales lead capture: +25-40%
-- Service self-serve: ≥30%
-- Hold time reduction: 80%
-
-## Support
-
-### Troubleshooting
-
-**Missing environment variables:**
-```bash
-npm run validate
-# Check failed items in report
+```
+$ curl -s http://127.0.0.1:18090/health
+{"status":"healthy","service":"dealer-logic-app","timestamp":"2026-09-11T05:25:47.900Z"}
 ```
 
-**Test call failures:**
-```bash
-# Check reports/test-results-*.json
-# Verify phone number routing
-# Confirm agent availability
+The monitor:
+
+```
+MONITOR_PORT=18091 WEBHOOK_PORT=18092 node scripts/monitor.js
 ```
 
-**Integration issues:**
-```bash
-# Check webhook connectivity
-# Verify API credentials
-# Review reports/deployment-*.json
+```
+$ curl -s http://127.0.0.1:18091/api/metrics
+{"calls":{"total":0,"answered":0,"abandoned":0,"transferred":0},"agents":{},"intents":{},"errors":[],"performance":{"avgResponseTime":0,"avgCallDuration":0}}
 ```
 
-### Rollback
+Both servers were stopped after a few seconds. Steps not run: `npm run deploy` (writes processed config and a report to disk; needs a filled `.env`), `npm test`, `npm run test:voice`, `api/server.js`, any Docker build, `fly deploy`, Vercel, Netlify, Codespaces.
 
-If issues occur, revert DID routing at SIP provider level:
-1. Access SIP provider portal
-2. Route DIDs back to legacy IVR
-3. Notify management team
-4. Generate incident report
+## What runs today
 
-## Security
+- `scripts/validate.js`: checks `.env` values, phone number formats, `config/agents.json`, tool endpoint URLs, business hours, and compliance strings. Writes a report to `reports/`.
+- `scripts/deploy.js`: fills the JSON templates in `config/` from `.env` and writes them to `config/processed/<id>/`. Local file work only; it does not call ElevenLabs.
+- `scripts/monitor.js`: two plain `http` servers, a dashboard with `/api/metrics` and a webhook listener that counts calls posted to it.
+- `scripts/app.js`: Express app with an in-memory SQLite database, JWT login, a dashboard page, `/health`, and `/api/data/github` and `/api/data/reddit` routes that call GitHub and Reddit when tokens are present.
+- `api/server.js`, `api/webhooks.js`, `api/conversation-handler.js`: Express routes meant to receive ElevenLabs webhook posts.
+- `api/elevenlabs-agent.js`: an axios client that builds an agent definition (system prompt, tools) for the ElevenLabs Conversational agents API.
+- `config/agents.json`: nine agents (`agent.reception`, `agent.sales`, `agent.tradein`, `agent.service`, `agent.service_status`, `agent.parts`, `agent.finance`, `agent.recall`, `agent.after_hours`). `config/tools.json` and `config/templates.json` hold the tool schemas and SMS/email text.
+- `public/`: three static pages (`index.html`, `demo.html`, `dashboard.html`).
 
-- No credit card processing by AI agents
-- Secure payment links only
-- Recording compliance per state law
-- Zero retention mode available
-- Encrypted webhook communications
+## Roadmap
 
-## 🐳 Docker Development
+None committed. The only open item is a Dependabot pull request bumping `tar-fs`.
 
-```bash
-# Build and run with Docker Compose
-docker-compose up -d
+## Limits
 
-# View logs
-docker-compose logs -f dealer-logic
+- This is configuration and glue, not a phone system. It needs an ElevenLabs agent, a SIP trunk, a CRM, and hosted tool endpoints that are not in this repository.
+- Nothing in the repository shows a live call was ever handled. The "Arizona Pilot" language and the KPI targets in the old docs describe goals, not results.
+- `.env.production` and the committed tarball `dealer-logic-deployment-20250905-233209.tar.gz` contain real Phoenix-area phone numbers and dealer-facing URLs. Treat them as public.
+- `scripts/app.js` falls back to fixed JWT and session secret strings when the environment does not set them. Do not run it on a public host as is.
+- The recording notice, SMS opt-in script, and DNC phrase are text in `config/`. Nothing here checks them against any law or carrier rule.
 
-# Stop services
-docker-compose down
-```
+## License and contact
 
-## ☁️ GitHub Codespaces
+No license file. `package.json` marks the package `UNLICENSED` (all rights reserved).
 
-This repository is optimized for GitHub Codespaces:
-
-1. Click "Code" → "Codespaces" → "Create codespace"
-2. Wait for environment setup (2-3 minutes)
-3. Terminal will show when ready
-4. Run `npm run validate` to check setup
-5. Access dashboard at forwarded port 3001
-
-### Codespace Features
-
-- Pre-configured Node.js environment
-- Mock API server for testing
-- Automatic port forwarding
-- VS Code extensions included
-- Git hooks pre-configured
-- Test data and scenarios ready
-
-## License
-
-Proprietary - Dealer Logic / ElevenLabs
-
-## Contact
-
-For support, escalation, or feedback:
-- Technical Support: [support email]
-- Account Manager: [AM contact]
-- Emergency: [24/7 number]
+Contact: michael@crowelogic.com
